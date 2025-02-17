@@ -1,8 +1,11 @@
 const AdmZip = require('adm-zip');
 const fs = require('fs');
 const path = require('path');
+const ignoreArray = require('./plugin-zip-ignore-array.cjs');
+
 // const { execSync } = require('child_process');
 const scriptGlobals = require('./script-globals.json');
+
 
 /*
  * Zip WP plugin with steps below:
@@ -20,6 +23,10 @@ function pluginZip() {
 	const pluginVersion = packageJson?.version;
 	const pluginUrl = packageJson.config?.['plugin-url'];
 	const pluginRoot = packageJson.config?.['plugin-root'];
+	const pluginDir = path.basename(process.cwd());
+	// const zipFileName = `${pluginDir}.zip`;
+	const newZipFileName = `${pluginDir}.${pluginVersion}.zip`;
+	const zipFilePath = path.join(process.cwd(), newZipFileName);
 
 	if (!pluginVersion || !pluginUrl || !pluginRoot) {
 		console.error(
@@ -32,13 +39,11 @@ function pluginZip() {
 	// execSync('wp-scripts plugin-zip', { stdio: 'inherit' });
 
 	// Locate the generated ZIP file 
-	const pluginDir = path.basename(process.cwd());
-	const zipPath = `${pluginDir}.zip`;
-	const newZipFileName = `${pluginDir}.${pluginVersion}.zip`;
+
 
 	if (fs.existsSync(newZipFileName)) {
 		fs.unlinkSync(newZipFileName);
-		console.error(`Deleted zipped plugin: ${zipPath}`);
+		console.error(`Deleted zipped plugin: ${newZipFileName}`);
 	}
 
 	// if (!fs.existsSync(zipPath)) {
@@ -48,52 +53,54 @@ function pluginZip() {
 
 	// Rename the ZIP file to include the version number
 
-	fs.renameSync(zipPath, newZipFileName);
-	const zipFilePath = path.join(process.cwd(), newZipFileName);
+	// fs.renameSync(zipPath, newZipFileName);
+
 
 	try {
+		const zip = new AdmZip();
+
 		// Load the ZIP file
-		const zip = new AdmZip(zipFilePath);
+		// const zip = new AdmZip(zipFilePath);
 
-		// Extract the names of the files and folders inside the ZIP
-		let zipEntries = zip.getEntries();
+		// // Extract the names of the files and folders inside the ZIP
+		// let zipEntries = zip.getEntries();
 
-		// Identify if there is a root folder or top-level files
-		const folderEntries = zipEntries.filter((entry) => entry.isDirectory);
-		const fileEntries = zipEntries.filter((entry) => !entry.isDirectory);
+		// // Identify if there is a root folder or top-level files
+		// const folderEntries = zipEntries.filter((entry) => entry.isDirectory);
+		// const fileEntries = zipEntries.filter((entry) => !entry.isDirectory);
 
-		// If there's no root folder, create one programmatically
-		let rootFolderName;
-		if (folderEntries.length > 0) {
-			rootFolderName = folderEntries[0].entryName; // Assume the first folder is the root
-		} else {
-			rootFolderName = `${pluginDir}/`; // Create a virtual root folder
-			fileEntries.map((entry) => ({
-				...entry,
-				entryName: `${rootFolderName}${entry.entryName}`
-			}));
-		}
+		// // If there's no root folder, create one programmatically
+		// let rootFolderName;
+		// if (folderEntries.length > 0) {
+		// 	rootFolderName = folderEntries[0].entryName; // Assume the first folder is the root
+		// } else {
+		// 	rootFolderName = `${pluginDir}/`; // Create a virtual root folder
+		// 	fileEntries.map((entry) => ({
+		// 		...entry,
+		// 		entryName: `${rootFolderName}${entry.entryName}`
+		// 	}));
+		// }
 
-		// Desired folder name inside the ZIP
-		const newFolderName = `${pluginDir}`;
+		// // Desired folder name inside the ZIP
+		// const newFolderName = `${pluginDir}`;
 
-		// Update the folder structure
-		console.log(`\nMore work in progress...`);
-		zipEntries = zipEntries.map((entry) =>
-			entry.entryName.startsWith(rootFolderName)
-				? {
-						...entry,
-						entryName: entry.entryName.replace(rootFolderName, `${newFolderName}/`)
-					}
-				: entry
-		);
+		// // Update the folder structure
+		// console.log(`\nMore work in progress...`);
+		// zipEntries = zipEntries.map((entry) =>
+		// 	entry.entryName.startsWith(rootFolderName)
+		// 		? {
+		// 				...entry,
+		// 				entryName: entry.entryName.replace(rootFolderName, `${newFolderName}/`)
+		// 			}
+		// 		: entry
+		// );
 
-		// Write the updated ZIP back to the same location
-		zip.writeZip(zipFilePath);
+		// // Write the updated ZIP back to the same location
+		// zip.writeZip(zipFilePath);
 
-		console.log(
-			`\nDone. Zipped folder is renamed to have WordPress plugin version number ('${newZipFileName}') and when it's unzipped you will see a folder named '${newFolderName}'! ${scriptGlobals.emojis['party-popper']}`
-		);
+		// console.log(
+		// 	`\nDone. Zipped folder is renamed to have WordPress plugin version number ('${newZipFileName}') and when it's unzipped you will see a folder named '${newFolderName}'! ${scriptGlobals.emojis['party-popper']}`
+		// );
 	} catch (error) {
 		console.error('An error occurred:', error.message);
 	}
