@@ -1,7 +1,7 @@
 const AdmZip = require('adm-zip');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+// const { execSync } = require('child_process');
 const scriptGlobals = require('./script-globals.json');
 
 /*
@@ -29,18 +29,25 @@ function pluginZip() {
 	}
 
 	// Run `wp-scripts plugin-zip` to create the initial ZIP file
-	execSync('wp-scripts plugin-zip', { stdio: 'inherit' });
+	// execSync('wp-scripts plugin-zip', { stdio: 'inherit' });
 
-	// Locate the generated ZIP file
+	// Locate the generated ZIP file 
 	const pluginDir = path.basename(process.cwd());
 	const zipPath = `${pluginDir}.zip`;
-	if (!fs.existsSync(zipPath)) {
-		console.error(`ZIP file not found: ${zipPath}`);
-		process.exit(1);
+	const newZipFileName = `${pluginDir}.${pluginVersion}.zip`;
+
+	if (fs.existsSync(newZipFileName)) {
+		fs.unlinkSync(newZipFileName);
+		console.error(`Deleted zipped plugin: ${zipPath}`);
 	}
 
+	// if (!fs.existsSync(zipPath)) {
+	// 	console.error(`ZIP file not found: ${zipPath}`);
+	// 	process.exit(1);
+	// }
+
 	// Rename the ZIP file to include the version number
-	const newZipFileName = `${pluginDir}.${pluginVersion}.zip`;
+
 	fs.renameSync(zipPath, newZipFileName);
 	const zipFilePath = path.join(process.cwd(), newZipFileName);
 
