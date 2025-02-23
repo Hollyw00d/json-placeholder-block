@@ -26,9 +26,14 @@ function pluginZip() {
 	// If a previous ZIP exists, delete it
 	if (fs.existsSync(zipFilePath)) {
 		fs.unlinkSync(zipFilePath);
-		console.log(`Deleted existing zipped file: ${newZipFileName}`); // eslint-disable-line no-console
+		console.log(`Deleted existing zipped file: ${newZipFileName}\n`); // eslint-disable-line no-console
 	}
 
+	/* eslint-disable no-console */
+	console.log(
+		`Creating archive for \`${pluginDir}\` plugin... ${scriptGlobals.emojis['wrapped-gift']}\n`
+	);
+	/* eslint-enable */
 
 	const zip = new AdmZip();
 	// Recursively add files and folders from the current directory into the ZIP
@@ -40,15 +45,19 @@ function pluginZip() {
 
 			const fullPath = path.join(srcDir, item);
 			const stat = fs.statSync(fullPath);
+			// Get the relative path, then remove the first directory (pluginDir) from it.
+			let relativePath = path.join(zipFolder, item).split(path.sep).join('/');
+			if (relativePath.startsWith(`${pluginDir}/`)) {
+				relativePath = relativePath.substring(pluginDir.length + 1);
+			}
 
 			if (stat.isDirectory()) {
 				// Add an empty folder entry to preserve folder structure
 				zip.addFile(path.join(zipFolder, item, '/'), Buffer.alloc(0));
-				console.log(item);
 				addFilesRecursively(fullPath, path.join(zipFolder, item));
 			} else {
 				// Add the file under the given ZIP folder
-				console.log(item);
+				console.log(`  Adding \`${relativePath}\`.`); // eslint-disable-line no-console
 				zip.addLocalFile(fullPath, zipFolder);
 			}
 		});
@@ -60,7 +69,7 @@ function pluginZip() {
 
 	/* eslint-disable no-console */
 	console.log(
-		`Done. Created ${newZipFileName}. When unzipped you will see a folder named '${pluginDir}'! ${scriptGlobals.emojis['party-popper']}`
+		`\nDone. Created zipped file for plugin named \`${newZipFileName}\`. When unzipped you will see a folder named \`${pluginDir}\`! ${scriptGlobals.emojis['party-popper']}`
 	);
 	/* eslint-enable */
 }
