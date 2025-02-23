@@ -24,7 +24,7 @@ function pluginZip() {
 	const pluginUrl = packageJson.config?.['plugin-url'];
 	const pluginRoot = packageJson.config?.['plugin-root'];
 	const pluginDir = path.basename(process.cwd());
-	// const zipFileName = `${pluginDir}.zip`;
+	const zipFileName = `${pluginDir}.zip`;
 	const newZipFileName = `${pluginDir}.${pluginVersion}.zip`;
 	const zipFilePath = path.join(process.cwd(), newZipFileName);
 
