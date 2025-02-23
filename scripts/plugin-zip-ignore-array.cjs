@@ -1,4 +1,12 @@
 const ignoreArray = [
+	'.DS_Store',
+ '.Spotlight-V100',
+ '.Trashes',
+ 'ehthumbs.db',
+ 'Thumbs.db',
+ '.git',
+ '.svn',
+ '.cvs,',
 	'.babelrc.json',
 	'.editorconfig',
 	'.eslintrc.json',

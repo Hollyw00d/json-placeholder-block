@@ -29,11 +29,9 @@ function pluginZip() {
 		console.log(`Deleted existing zipped file: ${newZipFileName}`); // eslint-disable-line no-console
 	}
 
-	// Create a new ZIP archive instance
-	const zip = new AdmZip();
 
-	// Recursively add files and folders from the current directory into the ZIP.
-	// All files are added under a root folder named after the plugin directory.
+	const zip = new AdmZip();
+	// Recursively add files and folders from the current directory into the ZIP
 	function addFilesRecursively(srcDir, zipFolder) {
 		const items = fs.readdirSync(srcDir);
 		items.forEach((item) => {
@@ -46,16 +44,15 @@ function pluginZip() {
 			if (stat.isDirectory()) {
 				// Add an empty folder entry to preserve folder structure
 				zip.addFile(path.join(zipFolder, item, '/'), Buffer.alloc(0));
-				// Recurse into subdirectory
+				console.log(item);
 				addFilesRecursively(fullPath, path.join(zipFolder, item));
 			} else {
 				// Add the file under the given ZIP folder
+				console.log(item);
 				zip.addLocalFile(fullPath, zipFolder);
 			}
 		});
 	}
-
-	// Start the recursive file addition with the root folder in the ZIP set to pluginDir
 	addFilesRecursively(process.cwd(), pluginDir);
 
 	// Write out the ZIP archive to disk
