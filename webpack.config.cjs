@@ -1,6 +1,7 @@
-const TerserPlugin = require('terser-webpack-plugin'); // eslint-disable-line import/no-extraneous-dependencies
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin'); // eslint-disable-line import/no-extraneous-dependencies
-const MiniCssExtractPlugin = require('mini-css-extract-plugin'); // eslint-disable-line import/no-extraneous-dependencies
+const TerserPlugin = require('terser-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const sass = require('sass');
 const path = require('path');
 
 module.exports = {
@@ -9,7 +10,6 @@ module.exports = {
 		errorDetails: true // Show error details
 	},
 	entry: {
-		block: './assets/js/block.js',
 		admin: './assets/js/admin.js'
 	},
 	output: {
@@ -35,13 +35,14 @@ module.exports = {
 					{
 						loader: 'css-loader',
 						options: {
-							sourceMap: true // Enable source maps for CSS
+							sourceMap: true
 						}
 					},
 					{
 						loader: 'sass-loader',
 						options: {
-							sourceMap: true // Enable source maps for SASS
+							sourceMap: true,
+							implementation: sass // Use Dart Sass explicitly
 						}
 					}
 				]

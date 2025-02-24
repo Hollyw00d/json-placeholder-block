@@ -1,23 +1,40 @@
 {
-  "env": {
-    "browser": true,
-    "node": true
-  },
-  "extends": ["wesbos", "prettier"],
-  "parserOptions": {
-    "sourceType": "module"
-  },
-  "rules": {
-    "semi": "error",
-    "no-console": "warn",
-    "class-methods-use-this": "off", 
-    "no-plusplus": "off"
-  },
-  "ignorePatterns": [
-    "node_modules",
-    "build",
-    "dist",
-    "package.json",
-    "package-lock.json"
-  ]
+	"env": {
+		"browser": true,
+		"node": true
+	},
+	"extends": ["airbnb", "prettier", "plugin:react/recommended"],
+	"parserOptions": {
+		"sourceType": "module",
+		"ecmaVersion": 2020
+	},
+	"settings": {
+		"react": {
+			"version": "detect"
+		}
+	},
+	"rules": {
+		"semi": "error",
+		"no-console": "warn",
+		"class-methods-use-this": "off",
+		"no-plusplus": "off",
+		"react/jsx-props-no-spreading": "off",
+		"react/react-in-jsx-scope": "off",
+		"react/prop-types": "off",
+		"import/extensions": "off",
+		"react/jsx-filename-extension": "off",
+		"import/no-unresolved": [
+			"error",
+			{
+				"ignore": ["^@wordpress/"]
+			}
+		]
+	},
+	"ignorePatterns": [
+		"node_modules",
+		"build",
+		"dist",
+		"package.json",
+		"package-lock.json"
+	]
 }

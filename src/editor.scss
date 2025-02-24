@@ -1,9 +1,11 @@
-/**
- * The following styles get applied inside the editor only.
- *
- * Replace them with your own styles or remove the file completely.
- */
+@use 'scss/layout/colors' as *;
 
-.wp-block-create-block-react-on-frontend-block {
-	border: 1px dotted #f00;
+.wp-block-create-block-jsonplaceholder-posts {
+	padding: 0.4rem;
+	border: 2px solid $black;
+
+	.settings-page-link {
+		padding: 0.4rem 0.8rem;
+		border: 2px solid $dark-red;
+	}
 }
