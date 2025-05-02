@@ -251,6 +251,33 @@ class JSON_Placeholder_Mock_API
 
     public function jsonplaceholder_mj_block() {
         register_block_type( __DIR__ . '/build' );
+
+        // URL to allow
+        $url_allow = 'https://jsonplaceholder.org';
+
+        // Get the request path
+        $current_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+        // Normalize both paths (remove leading/trailing slashes)
+        $current_path = trim($current_path, '/');
+        $allowed_path = 'api/json';
+
+        // Get the Origin header if set
+        $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+
+        // Check conditions
+        if (
+            ( $current_path === $allowed_path || $current_path === rtrim($allowed_path, '/') ) &&
+            $_SERVER['REQUEST_METHOD'] === 'GET' &&
+            $origin === $url_allow
+        ) {
+            if (!headers_sent()) {
+                header('Access-Control-Allow-Origin: https://jsonplaceholder.org');
+                header('Access-Control-Allow-Methods: GET');
+                header('Access-Control-Allow-Headers: Content-Type');
+            }
+        }
+
     }
 }
 
