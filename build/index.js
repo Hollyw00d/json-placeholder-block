@@ -148,7 +148,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 function Posts(_ref) {
   var jsonData = _ref.jsonData,
     isEditPage = _ref.isEditPage;
-  var posts10OrLess = jsonData.slice(0, 10);
+  var posts10OrLess = jsonData[0].data.slice(0, 10);
   var _useState = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(posts10OrLess),
     _useState2 = _slicedToArray(_useState, 2),
     getPosts = _useState2[0],

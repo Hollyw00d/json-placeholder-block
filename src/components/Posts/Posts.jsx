@@ -4,7 +4,7 @@ import ResetButton from '../ResetButton/ResetButton';
 import SettingsPageLink from '../SettingsPageLink/SettingsPageLink';
 
 export default function Posts({ jsonData, isEditPage }) {
-	const posts10OrLess = jsonData.slice(0, 10);
+	const posts10OrLess = jsonData[0].data.slice(0, 10);
 	const [getPosts, setGetPosts] = useState(posts10OrLess);
 	const [selectChanged, setSelectChanged] = useState(false);
 	const [selectedOption, setSelectedOption] = useState('');
