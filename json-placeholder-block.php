@@ -27,6 +27,10 @@ class JSON_Placeholder_Mock_API
     public static function init() {
         $self = new self();
         add_action('rest_api_init', array($self, PLUGIN_PREFIX . 'mock_block_wp_rest'));
+
+        add_action('rest_api_init', array($self, PLUGIN_PREFIX . 'get_mock_json_data'));
+
+
         add_action('admin_menu', array($self, PLUGIN_PREFIX . 'settings_page'));
         add_action('admin_post_' . PLUGIN_PREFIX . 'save_settings', array(
             $self,
@@ -50,6 +54,76 @@ class JSON_Placeholder_Mock_API
             'callback'              => array($this, 'jsonplaceholder_mj_get_option'),
             'permission_callback'   => '__return_true'
         ));
+    }
+
+    public function jsonplaceholder_mj_get_mock_json_data() {
+        register_rest_route('myapi/v1', '/proxy', [
+            'methods' => 'GET',
+            'callback' => function (WP_REST_Request $request) {
+                $url = $request->get_param('url');
+    
+                $base_url_arr = get_option('jsonplaceholder_mj_jsonplaceholder_org'); // expected: array
+                // Get base URL from options (stored as a string)
+                $base_url = isset($base_url_arr['jsonplaceholder_url']) ? $base_url_arr['jsonplaceholder_url'] : '';
+
+                if (!$base_url || !filter_var($base_url, FILTER_VALIDATE_URL)) {
+                    return rest_ensure_response([
+                        'success' => false,
+                        'reason' => 'Missing or invalid base URL in options',
+                    ]);
+                }
+    
+                // Escape and prepare regex: allow /posts or /posts/1–100
+                $escaped_base = preg_quote(rtrim($base_url, '/'), '/');
+                $pattern = "/^{$escaped_base}(\/([1-9][0-9]?|100))?$/";
+    
+                // Parse and validate input URL
+                $parsed_url = parse_url($url);
+                if (!empty($parsed_url['query'])) {
+                    return rest_ensure_response([
+                        'success' => false,
+                        'reason' => 'Query parameters not allowed',
+                        'url' => $url,
+                    ]);
+                }
+    
+                if (!preg_match($pattern, $url)) {
+                    return rest_ensure_response([
+                        'success' => false,
+                        'reason' => 'Regex pattern did not match',
+                        'url' => $url,
+                        'pattern' => $pattern,
+                    ]);
+                }
+    
+                // Fetch the remote JSON
+                $response = wp_remote_get($url);
+    
+                if (is_wp_error($response)) {
+                    return rest_ensure_response([
+                        'success' => false,
+                        'reason' => 'wp_remote_get failed',
+                        'url' => $url,
+                        'error_message' => $response->get_error_message(),
+                    ]);
+                }
+    
+                $body = wp_remote_retrieve_body($response);
+    
+                // Send CORS headers
+                if (!headers_sent()) {
+                    header('Access-Control-Allow-Origin: *');
+                    header('Access-Control-Allow-Methods: GET');
+                    header('Access-Control-Allow-Headers: Content-Type');
+                }
+    
+                return rest_ensure_response([
+                    'success' => true,
+                    'data' => json_decode($body, true),
+                ]);
+            },
+            'permission_callback' => '__return_true',
+        ]);
     }
 
     public function jsonplaceholder_mj_get_option() {
