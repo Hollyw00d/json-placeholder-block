@@ -1,1 +1,14 @@
-.wp-block-create-block-jsonplaceholder-posts img{border:1px solid #616161}.wp-block-create-block-jsonplaceholder-posts .alert-success{background-color:#d4edda;border-color:#c3e6cb;color:#155724;padding:.4rem .8rem}
+/*!***********************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/@wordpress/scripts/node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/style.scss ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************/
+.wp-block-create-block-jsonplaceholder-posts img {
+  border: 1px solid #616161;
+}
+.wp-block-create-block-jsonplaceholder-posts .alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  padding: 0.4rem 0.8rem;
+}
+
+/*# sourceMappingURL=style-index.css.map*/

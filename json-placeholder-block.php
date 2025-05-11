@@ -62,35 +62,50 @@ class JSON_Placeholder_Mock_API
             'callback' => function (WP_REST_Request $request) {
                 $url = $request->get_param('url');
     
-                // Get the allowed base URL from the options table
-                $base_url = get_option('jsonplaceholder_mj_jsonplaceholder_org'); // e.g., 'https://jsonplaceholder.org/posts'
-                if (!$base_url) {
-                    return new WP_Error('missing_base_url', 'Proxy base URL is not configured.', ['status' => 500]);
+                $base_url_arr = get_option('jsonplaceholder_mj_jsonplaceholder_org'); // expected: array
+                // Get base URL from options (stored as a string)
+                $base_url = isset($base_url_arr['jsonplaceholder_url']) ? $base_url_arr['jsonplaceholder_url'] : '';
+
+                if (!$base_url || !filter_var($base_url, FILTER_VALIDATE_URL)) {
+                    return rest_ensure_response([
+                        'success' => false,
+                        'reason' => 'Missing or invalid base URL in options',
+                    ]);
                 }
     
-                // Escape for regex use
+                // Escape and prepare regex: allow /posts or /posts/1–100
                 $escaped_base = preg_quote(rtrim($base_url, '/'), '/');
+                $pattern = "/^{$escaped_base}(\/([1-9][0-9]?|100))?$/";
     
-                // Allowed URL pattern:
-                // https://jsonplaceholder.org/posts
-                // https://jsonplaceholder.org/posts/1 through /100
-                $pattern = "/^{$escaped_base}(\/([1-9][0-9]?|100))?$/"; // matches /posts, /posts/1 - /posts/100
-    
-                // Block query parameters early
+                // Parse and validate input URL
                 $parsed_url = parse_url($url);
                 if (!empty($parsed_url['query'])) {
-                    return new WP_Error('invalid_query', 'Query parameters are not allowed', ['status' => 400]);
+                    return rest_ensure_response([
+                        'success' => false,
+                        'reason' => 'Query parameters not allowed',
+                        'url' => $url,
+                    ]);
                 }
     
-                // Validate URL against the regex
                 if (!preg_match($pattern, $url)) {
-                    return new WP_Error('invalid_url', 'URL not allowed', ['status' => 400]);
+                    return rest_ensure_response([
+                        'success' => false,
+                        'reason' => 'Regex pattern did not match',
+                        'url' => $url,
+                        'pattern' => $pattern,
+                    ]);
                 }
     
-                // Fetch the external API
+                // Fetch the remote JSON
                 $response = wp_remote_get($url);
+    
                 if (is_wp_error($response)) {
-                    return new WP_Error('fetch_failed', 'Failed to fetch data', ['status' => 500]);
+                    return rest_ensure_response([
+                        'success' => false,
+                        'reason' => 'wp_remote_get failed',
+                        'url' => $url,
+                        'error_message' => $response->get_error_message(),
+                    ]);
                 }
     
                 $body = wp_remote_retrieve_body($response);
@@ -102,8 +117,10 @@ class JSON_Placeholder_Mock_API
                     header('Access-Control-Allow-Headers: Content-Type');
                 }
     
-                // Return the JSON-decoded response
-                return rest_ensure_response(json_decode($body));
+                return rest_ensure_response([
+                    'success' => true,
+                    'data' => json_decode($body, true),
+                ]);
             },
             'permission_callback' => '__return_true',
         ]);
