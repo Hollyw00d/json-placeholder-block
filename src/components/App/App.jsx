@@ -25,7 +25,7 @@ export default function App({ isEditPage }) {
 					? getJsonData
 					: [getJsonData];
 
-				if(!finalData[0]?.success) throw new Error('No data found!');
+				if(!finalData[0]?.success || finalData[0]?.data === null) throw new Error('No data found!');
 
 				setJsonData(finalData);
 			} catch (error) {

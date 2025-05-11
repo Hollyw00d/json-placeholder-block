@@ -45,7 +45,7 @@ function App(_ref) {
     }
     function _fetchData() {
       _fetchData = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var _finalData$, response, data, jsonplaceholderUrl, proxyUrl, getJsonResponse, getJsonData, finalData;
+        var _finalData$, _finalData$2, response, data, jsonplaceholderUrl, proxyUrl, getJsonResponse, getJsonData, finalData;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
@@ -69,7 +69,7 @@ function App(_ref) {
             case 14:
               getJsonData = _context.sent;
               finalData = Array.isArray(getJsonData) ? getJsonData : [getJsonData];
-              if ((_finalData$ = finalData[0]) !== null && _finalData$ !== void 0 && _finalData$.success) {
+              if (!(!((_finalData$ = finalData[0]) !== null && _finalData$ !== void 0 && _finalData$.success) || ((_finalData$2 = finalData[0]) === null || _finalData$2 === void 0 ? void 0 : _finalData$2.data) === null)) {
                 _context.next = 18;
                 break;
               }
@@ -153,7 +153,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 function Posts(_ref) {
   var jsonData = _ref.jsonData,
     isEditPage = _ref.isEditPage;
-  var posts10OrLess = jsonData[0].data.slice(0, 10);
+  var posts10OrLess = Array.isArray(jsonData[0].data) ? jsonData[0].data.slice(0, 10) : [jsonData[0].data];
   var _useState = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(posts10OrLess),
     _useState2 = _slicedToArray(_useState, 2),
     getPosts = _useState2[0],
