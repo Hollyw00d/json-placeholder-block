@@ -45,7 +45,7 @@ function App(_ref) {
     }
     function _fetchData() {
       _fetchData = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var response, data, jsonplaceholderUrl, proxyUrl, getJsonResponse, getJsonData, finalData;
+        var _finalData$, response, data, jsonplaceholderUrl, proxyUrl, getJsonResponse, getJsonData, finalData;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
@@ -58,7 +58,7 @@ function App(_ref) {
               return response.json();
             case 6:
               data = _context.sent;
-              jsonplaceholderUrl = data.jsonplaceholder_url; // Step 2: Fetch the actual JSON via the WP proxy endpoint (CORS-safe)
+              jsonplaceholderUrl = data.jsonplaceholder_url;
               proxyUrl = "".concat(wpRestProxy, "?url=").concat(encodeURIComponent(jsonplaceholderUrl));
               _context.next = 11;
               return fetch(proxyUrl);
@@ -68,26 +68,31 @@ function App(_ref) {
               return getJsonResponse.json();
             case 14:
               getJsonData = _context.sent;
-              // Step 3: Normalize result (array or single object)
               finalData = Array.isArray(getJsonData) ? getJsonData : [getJsonData];
+              if ((_finalData$ = finalData[0]) !== null && _finalData$ !== void 0 && _finalData$.success) {
+                _context.next = 18;
+                break;
+              }
+              throw new Error('No data found!');
+            case 18:
               setJsonData(finalData);
-              _context.next = 22;
+              _context.next = 24;
               break;
-            case 19:
-              _context.prev = 19;
+            case 21:
+              _context.prev = 21;
               _context.t0 = _context["catch"](0);
               setJsonData('No data found!');
-            case 22:
+            case 24:
             case "end":
               return _context.stop();
           }
-        }, _callee, null, [[0, 19]]);
+        }, _callee, null, [[0, 21]]);
       }));
       return _fetchData.apply(this, arguments);
     }
     fetchData();
   }, [wpRestJsonData, wpRestProxy]);
-  return /*#__PURE__*/React.createElement("div", null, Array.isArray(jsonData) ? /*#__PURE__*/React.createElement(_Posts_Posts_jsx__WEBPACK_IMPORTED_MODULE_1__["default"], {
+  return /*#__PURE__*/React.createElement("div", null, Array.isArray(jsonData) && jsonData[0].success ? /*#__PURE__*/React.createElement(_Posts_Posts_jsx__WEBPACK_IMPORTED_MODULE_1__["default"], {
     jsonData: jsonData,
     isEditPage: isEditPage
   }) : /*#__PURE__*/React.createElement("h2", null, jsonData));
