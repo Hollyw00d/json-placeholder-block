@@ -5,7 +5,7 @@
  * Author:          Matt Jennings
  * Author URI:      https://www.mattjennings.net/
  * Text Domain:     json-placeholder-block
- * Version:         1.0.0
+ * Version:         1.1.0
  */
 
 if (!defined('ABSPATH')) {
